@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/tableLine"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/scoreTypeLabel_1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@color/tableHeader"
+        android:fontFamily="@font/custom_font"
+        android:gravity="center"
+        android:text="Upper"
+        android:textColor="#000000"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/scoreTypeLabel_2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@color/tableType"
+        android:fontFamily="@font/custom_font"
+        android:gravity="center"
+        android:text="Ace"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/scoreTypeLabel_3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@color/tableType"
+        android:fontFamily="@font/custom_font"
+        android:gravity="center"
+        android:text="Two"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/scoreTypeLabel_4"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@color/tableType"
+        android:fontFamily="@font/custom_font"
+        android:gravity="center"
+        android:text="Three"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/scoreTypeLabel_5"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@color/tableType"
+        android:fontFamily="@font/custom_font"
+        android:gravity="center"
+        android:text="Four"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/scoreTypeLabel_6"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@color/tableType"
+        android:fontFamily="@font/custom_font"
+        android:gravity="center"
+        android:text="Five"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/scoreTypeLabel_7"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@color/tableType"
+        android:fontFamily="@font/custom_font"
+        android:gravity="center"
+        android:text="Six"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/scoreTypeLabel_8"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@color/tableBG2"
+        android:fontFamily="@font/custom_font"
+        android:gravity="center"
+        android:text="UpTotal"
+        android:textColor="#000000"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/scoreTypeLabel_9"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@color/tableBG2"
+        android:fontFamily="@font/custom_font"
+        android:gravity="center"
+        android:text="Bonus"
+        android:textColor="#000000"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/scoreTypeLabel_10"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@color/tableType"
+        android:fontFamily="@font/custom_font"
+        android:gravity="center"
+        android:text="Choice"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/scoreTypeLabel_11"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@color/tableType"
+        android:fontFamily="@font/custom_font"
+        android:gravity="center"
+        android:text="FourKind"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/scoreTypeLabel_12"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@color/tableType"
+        android:fontFamily="@font/custom_font"
+        android:gravity="center"
+        android:text="F.House"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/scoreTypeLabel_13"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@color/tableType"
+        android:fontFamily="@font/custom_font"
+        android:gravity="center"
+        android:text="s.ST"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/scoreTypeLabel_14"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@color/tableType"
+        android:fontFamily="@font/custom_font"
+        android:gravity="center"
+        android:text="l.ST"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/scoreTypeLabel_15"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@color/tableType"
+        android:fontFamily="@font/custom_font"
+        android:gravity="center"
+        android:text="Yacht"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/scoreTypeLabel_16"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@color/tableBG2"
+        android:fontFamily="@font/custom_font"
+        android:gravity="center"
+        android:text="Total"
+        android:textColor="#000000"
+        android:textStyle="bold" />
+
+</LinearLayout>
