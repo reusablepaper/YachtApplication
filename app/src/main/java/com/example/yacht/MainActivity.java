@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
         createScoreBoardButton = findViewById(R.id.createScoreBoardButton);
+        playGameButton = findViewById(R.id.playGameButton);
 
         createScoreBoardButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -36,5 +37,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        playGameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, PlayerSettingActivity.class);
+                intent.putExtra("mode", "playGame");
+                startActivity(intent);
+            }
+        });
+
+
     }
 }

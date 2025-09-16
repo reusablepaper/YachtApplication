@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="15dp"
+    android:orientation="vertical"
+    tools:context=".DiceFragment">
+
+    <LinearLayout
+        android:id="@+id/dice_image_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_weight="11"
+        android:background="@drawable/background"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/dice_1"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="15dp"
+            android:contentDescription="Dice 1"
+            android:src="@drawable/one" />
+
+        <ImageView
+            android:id="@+id/dice_2"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="15dp"
+            android:contentDescription="Dice 2"
+            android:src="@drawable/two" />
+
+        <ImageView
+            android:id="@+id/dice_3"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="15dp"
+            android:contentDescription="Dice 3"
+            android:src="@drawable/three" />
+
+        <ImageView
+            android:id="@+id/dice_4"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="15dp"
+            android:contentDescription="Dice 4"
+            android:src="@drawable/four" />
+
+        <ImageView
+            android:id="@+id/dice_5"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="15dp"
+            android:contentDescription="Dice 5"
+            android:src="@drawable/five" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/roll_dice_button"
+        android:layout_width="123dp"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:layout_weight="1"
+        android:background="@drawable/btn_basic"
+        android:fontFamily="@font/custom_font"
+        android:gravity="center"
+        android:text="굴리기"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
+
+</LinearLayout>

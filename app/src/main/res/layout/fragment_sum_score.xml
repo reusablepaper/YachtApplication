@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sumScore"
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:background="@color/tableLine"
+    android:orientation="vertical"
+    android:layout_marginHorizontal="15dp"
+    android:layout_marginBottom="15dp"
+    tools:context=".SumScoreFragment">
+
+    <TextView
+        android:id="@+id/sumPlayerName"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@color/tableHeader"
+        android:fontFamily="@font/custom_font"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="#000000"/>
+
+    <TextView
+        android:id="@+id/sumPlayerScore"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@color/tableBG1"
+        android:fontFamily="@font/custom_font"
+        android:gravity="center"
+        android:text="0"
+        android:textSize="20sp"
+        android:textColor="#000000"/>
+</LinearLayout>

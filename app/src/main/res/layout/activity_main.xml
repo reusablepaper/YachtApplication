@@ -7,17 +7,71 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/createScoreBoardButton"
-        android:layout_width="177dp"
-        android:layout_height="54dp"
-        android:background="@drawable/btn_basic"
-        android:fontFamily="@font/custom_font"
-        android:text="점수판만들기"
-        android:textColor="#FFFFFF"
-        android:textSize="24sp"
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/main" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginTop="100dp"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/logo" />
+
+        <Button
+            android:id="@+id/createScoreBoardButton"
+            android:layout_width="177dp"
+            android:layout_height="54dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/btn_basic"
+            android:fontFamily="@font/custom_font"
+            android:gravity="center"
+            android:text="점수판만들기"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/playGameButton"
+            android:layout_width="177dp"
+            android:layout_height="54dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/btn_basic"
+            android:fontFamily="@font/custom_font"
+            android:gravity="center"
+            android:text="게임하기"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="50dp"
+        android:fontFamily="@font/custom_font"
+        android:gravity="center"
+        android:text="버그가 발견된다면 제 잘못은 아닌듯 알아서 하세용"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
