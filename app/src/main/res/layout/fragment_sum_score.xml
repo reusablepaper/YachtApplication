@@ -7,7 +7,6 @@
     android:layout_weight="1"
     android:background="@color/tableLine"
     android:orientation="vertical"
-    android:layout_marginHorizontal="15dp"
     android:layout_marginBottom="15dp"
     tools:context=".SumScoreFragment">
 

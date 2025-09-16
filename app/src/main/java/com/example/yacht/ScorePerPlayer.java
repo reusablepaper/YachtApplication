@@ -2,23 +2,15 @@ package com.example.yacht;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Arrays; // Arrays.asList 사용을 위해 import
 
-/**
- * 각 플레이어의 턴별/카테고리별 점수를 관리하는 클래스입니다.
- */
 public class ScorePerPlayer {
 
-    // 각 점수 카테고리(예: Aces, Full House)의 최종 점수
-    private Map<String, Integer> finalScores;
-    // 각 점수 카테고리가 해당 플레이어에 의해 이미 사용(기록)되었는지 여부
-    private Map<String, Boolean> categoriesUsed;
+    // final로 선언하여 한 번 할당된 맵은 변경되지 않도록 합니다.
+    private final Map<String, Integer> finalScores; // 확정된 점수들을 저장
+    private final Map<String, Boolean> categoriesUsed; // 각 카테고리가 사용되었는지 여부 저장
 
-    // Upper Section 총점 및 보너스 점수
-    private int upperSectionTotal;
-    private int bonusScore; // 63점 이상 시 35점 보너스
-    private int totalScore; // 최종 총점
-
-    // 야추 게임의 점수 카테고리 목록
+    // 족보 카테고리를 나타내는 상수들 (ScoreCalculator, GameManager, NowPlayerFragment 등에서 공통으로 사용)
     public static final String CATEGORY_ACES = "Aces";
     public static final String CATEGORY_TWOS = "Twos";
     public static final String CATEGORY_THREES = "Threes";
@@ -33,91 +25,82 @@ public class ScorePerPlayer {
     public static final String CATEGORY_YACHT = "Yacht";
 
     public ScorePerPlayer() {
-        initializeScores();
-    }
-
-    private void initializeScores() {
-        finalScores = new HashMap<>();
-        categoriesUsed = new HashMap<>();
-
-        // 모든 카테고리에 대해 초기 점수 0, 사용 안 됨으로 설정
-        String[] categories = {
-                CATEGORY_ACES, CATEGORY_TWOS, CATEGORY_THREES, CATEGORY_FOURS, CATEGORY_FIVES, CATEGORY_SIXES,
-                CATEGORY_CHOICE, CATEGORY_4_OF_A_KIND, CATEGORY_FULL_HOUSE, CATEGORY_SMALL_STRAIGHT,
-                CATEGORY_LARGE_STRAIGHT, CATEGORY_YACHT
-        };
-
-        for (String category : categories) {
-            finalScores.put(category, 0);
-            categoriesUsed.put(category, false);
-        }
-
-        upperSectionTotal = 0;
-        bonusScore = 0;
-        totalScore = 0;
+        // 생성 시 맵들을 초기화합니다.
+        this.finalScores = new HashMap<>();
+        this.categoriesUsed = new HashMap<>();
     }
 
     /**
-     * 특정 카테고리에 점수를 기록합니다.
-     * @param category 점수를 기록할 카테고리
+     * 특정 카테고리에 점수를 기록합니다. 이미 사용된 카테고리인 경우 기록하지 않습니다.
+     * @param category 기록할 족보 카테고리 (ScorePerPlayer.CATEGORY_ACES 등 상수 사용)
      * @param score 기록할 점수
-     * @return 성공적으로 기록되었는지 여부 (이미 사용된 카테고리인 경우 false 반환)
+     * @return 점수 기록 성공 시 true, 이미 사용된 카테고리인 경우 false
      */
     public boolean recordScore(String category, int score) {
+        // 해당 카테고리가 이미 사용되었는지 확인
         if (categoriesUsed.getOrDefault(category, false)) {
-            return false; // 이미 사용된 카테고리
+            return false; // 이미 사용되었으면 기록하지 않고 false 반환
         }
-        finalScores.put(category, score);
-        categoriesUsed.put(category, true);
-        calculateTotalScores(); // 점수 기록 후 총점 다시 계산
-        return true;
+        finalScores.put(category, score); // 점수 기록
+        categoriesUsed.put(category, true); // 해당 카테고리를 사용 완료로 표시
+        return true; // 성공적으로 기록했으므로 true 반환
     }
 
     /**
-     * 모든 점수를 기반으로 Upper Section 총점, 보너스, 최종 총점을 계산합니다.
+     * 특정 카테고리의 기록된 점수를 반환합니다. 기록되지 않았다면 0을 반환합니다.
+     * @param category 점수를 조회할 족보 카테고리
+     * @return 기록된 점수, 없으면 0
      */
-    public void calculateTotalScores() {
-        upperSectionTotal = 0;
-        upperSectionTotal += finalScores.getOrDefault(CATEGORY_ACES, 0);
-        upperSectionTotal += finalScores.getOrDefault(CATEGORY_TWOS, 0);
-        upperSectionTotal += finalScores.getOrDefault(CATEGORY_THREES, 0);
-        upperSectionTotal += finalScores.getOrDefault(CATEGORY_FOURS, 0);
-        upperSectionTotal += finalScores.getOrDefault(CATEGORY_FIVES, 0);
-        upperSectionTotal += finalScores.getOrDefault(CATEGORY_SIXES, 0);
-
-        bonusScore = (upperSectionTotal >= 63) ? 35 : 0;
-
-        totalScore = upperSectionTotal + bonusScore;
-        totalScore += finalScores.getOrDefault(CATEGORY_CHOICE, 0);
-        totalScore += finalScores.getOrDefault(CATEGORY_4_OF_A_KIND, 0);
-        totalScore += finalScores.getOrDefault(CATEGORY_FULL_HOUSE, 0);
-        totalScore += finalScores.getOrDefault(CATEGORY_SMALL_STRAIGHT, 0);
-        totalScore += finalScores.getOrDefault(CATEGORY_LARGE_STRAIGHT, 0);
-        totalScore += finalScores.getOrDefault(CATEGORY_YACHT, 0);
-    }
-
-    // Getter 메서드들
     public int getScore(String category) {
         return finalScores.getOrDefault(category, 0);
     }
 
+    /**
+     * 특정 카테고리가 이미 사용되어 점수가 기록되었는지 여부를 반환합니다.
+     * @param category 확인할 족보 카테고리
+     * @return 사용되었으면 true, 아니면 false
+     */
     public boolean isCategoryUsed(String category) {
         return categoriesUsed.getOrDefault(category, false);
     }
 
+    /**
+     * 상단 섹션 점수(Aces, Twos, Threes, Fours, Fives, Sixes)의 총합을 계산하여 반환합니다.
+     * (주사위 눈금으로 계산하는 것이 아니라, finalScores에 기록된 점수들을 합산합니다.)
+     * @return 상단 섹션 점수 총합
+     */
     public int getUpperSectionTotal() {
-        return upperSectionTotal;
+        return Arrays.asList(CATEGORY_ACES, CATEGORY_TWOS, CATEGORY_THREES, CATEGORY_FOURS, CATEGORY_FIVES, CATEGORY_SIXES)
+                .stream() // 리스트의 각 카테고리에 대해 스트림 처리
+                .mapToInt(category -> finalScores.getOrDefault(category, 0)) // 각 카테고리의 기록된 점수를 가져오고, 없으면 0
+                .sum(); // 모든 점수를 합산
     }
 
-    public int getBonusScore() {
-        return bonusScore;
+    /**
+     * 상단 섹션 보너스를 계산하여 반환합니다. (상단 총합이 63점 이상이면 35점)
+     * @return 상단 섹션 보너스 점수
+     */
+    public int getUpperSectionBonus() {
+        return getUpperSectionTotal() >= 63 ? 35 : 0; // 63점 이상이면 35, 아니면 0
     }
 
-    public int getTotalScore() {
-        return totalScore;
+    /**
+     * 하단 섹션 점수(Choice, 4 of a Kind, Full House, Small Straight, Large Straight, Yacht)의 총합을 계산하여 반환합니다.
+     * (주사위 눈금으로 계산하는 것이 아니라, finalScores에 기록된 점수들을 합산합니다.)
+     * @return 하단 섹션 점수 총합
+     */
+    public int getLowerSectionTotal() {
+        return Arrays.asList(CATEGORY_CHOICE, CATEGORY_4_OF_A_KIND, CATEGORY_FULL_HOUSE, CATEGORY_SMALL_STRAIGHT, CATEGORY_LARGE_STRAIGHT, CATEGORY_YACHT)
+                .stream() // 리스트의 각 카테고리에 대해 스트림 처리
+                .mapToInt(category -> finalScores.getOrDefault(category, 0)) // 각 카테고리의 기록된 점수를 가져오고, 없으면 0
+                .sum(); // 모든 점수를 합산
     }
 
-    public Map<String, Integer> getFinalScores() {
-        return finalScores;
+    /**
+     * 최종 총점(상단 총합 + 상단 보너스 + 하단 총합)을 계산하여 반환합니다.
+     * @return 게임의 최종 총점
+     */
+    public int getGrandTotal() {
+        return getUpperSectionTotal() + getUpperSectionBonus() + getLowerSectionTotal();
     }
 }

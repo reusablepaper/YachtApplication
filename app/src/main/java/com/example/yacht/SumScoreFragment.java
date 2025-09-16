@@ -6,26 +6,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SumScoreFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SumScoreFragment extends Fragment {
-    private static final String ARG_PLAYER_NAME = "player_name"; // Bundle 키 정의
-    private String playerName;
-    private TextView playerNameTextView;
-    private TextView totalScoreTextView; // 플레이어의 총점을 표시할 TextView
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String ARG_PLAYER_NAME = "player_name";
+    private String playerName;
+
+    private TextView playerNameTextView;
+    private TextView totalScoreTextView;
+
+    private GameManager gameManager;
 
     public SumScoreFragment() {
         // Required empty public constructor
@@ -35,20 +28,9 @@ public class SumScoreFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SumScore.
+     * @param playerName The name of the player for this score summary.
+     * @return A new instance of fragment SumScoreFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static SumScoreFragment newInstance(String param1, String param2) {
-        SumScoreFragment fragment = new SumScoreFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-    // 새 인스턴스를 생성할 때 플레이어 이름을 전달하는 팩토리 메서드
     public static SumScoreFragment newInstance(String playerName) {
         SumScoreFragment fragment = new SumScoreFragment();
         Bundle args = new Bundle();
@@ -58,41 +40,40 @@ public class SumScoreFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        gameManager = GameManager.getInstance();
         if (getArguments() != null) {
             playerName = getArguments().getString(ARG_PLAYER_NAME);
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sum_score, container, false);
 
-        playerNameTextView = view.findViewById(R.id.sumPlayerName); // 예시 ID
-        totalScoreTextView = view.findViewById(R.id.sumPlayerScore); // 예시 ID
+        playerNameTextView = view.findViewById(R.id.sumPlayerName);
+        totalScoreTextView = view.findViewById(R.id.sumPlayerScore);
 
         if (playerName != null) {
             playerNameTextView.setText(playerName);
+            updatePlayerTotalScore(); // 초기 점수 업데이트
         }
-
-        // TODO: GameManager로부터 해당 플레이어의 총점을 가져와서 totalScoreTextView에 설정하는 로직
-        // GameManager gameManager = GameManager.getInstance();
-        // int totalScore = gameManager.getPlayerScoresMap().get(playerName).getTotalScore(); // getTotalScore()는 ScorePerPlayer에 있어야 함
-        // totalScoreTextView.setText(String.valueOf(totalScore));
 
         return view;
     }
 
-    // TODO: GameManager로부터 점수 업데이트 알림을 받았을 때 UI를 갱신하는 메서드
+    /**
+     * Updates the player's total score displayed in this fragment.
+     * This method can be called by the hosting activity or another fragment
+     * when the game state changes.
+     */
     public void updatePlayerTotalScore() {
-        if (totalScoreTextView != null && playerName != null) {
-            GameManager gameManager = GameManager.getInstance();
+        if (playerName != null && gameManager != null) {
             ScorePerPlayer playerScores = gameManager.getPlayerScoresMap().get(playerName);
             if (playerScores != null) {
-                // getTotalScore() 메서드는 ScorePerPlayer 클래스에 정의되어 있어야 합니다.
-                int totalScore = playerScores.getTotalScore();
+                int totalScore = playerScores.getGrandTotal();
                 totalScoreTextView.setText(String.valueOf(totalScore));
             }
         }
