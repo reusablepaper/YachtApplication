@@ -24,6 +24,7 @@ public class PlayerSettingActivity extends AppCompatActivity {
     private Button addPlayerButton;
     private Button nextButton;
     private int playerCount = 0;
+    private String mode; // Declare a variable to hold the mode
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,10 @@ public class PlayerSettingActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // Retrieve the mode from the intent
+        Intent intent = getIntent();
+        mode = intent.getStringExtra("mode");
 
         playerListContainer = findViewById(R.id.playerListContainer);
         addPlayerButton = findViewById(R.id.addPlayerButton);
@@ -73,9 +78,20 @@ public class PlayerSettingActivity extends AppCompatActivity {
                     return;
                 }
 
-                Intent intent = new Intent(PlayerSettingActivity.this, ScoreBoardActivity.class);
-                intent.putStringArrayListExtra("playerNames", playerNames);
-                startActivity(intent);
+                // Check the mode and start the appropriate activity
+                if ("createScoreBoard".equals(mode)) {
+                    Intent nextIntent = new Intent(PlayerSettingActivity.this, ScoreBoardActivity.class);
+                    nextIntent.putStringArrayListExtra("playerNames", playerNames);
+                    startActivity(nextIntent);
+                } else if ("playGame".equals(mode)) {
+                    // Assuming you have a PlayGameActivity class
+                    Intent nextIntent = new Intent(PlayerSettingActivity.this, PlayGameActivity.class);
+                    nextIntent.putStringArrayListExtra("playerNames", playerNames);
+                    startActivity(nextIntent);
+                } else {
+                    // Handle an unexpected mode, perhaps by showing an error or defaulting
+                    Toast.makeText(PlayerSettingActivity.this, "Error: Unknown mode", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -88,14 +104,11 @@ public class PlayerSettingActivity extends AppCompatActivity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // --- 수정된 부분 시작 ---
-                if (playerCount > 1) { // 플레이어가 1명 초과일 때만 삭제 가능
+                if (playerCount > 1) {
                     playerListContainer.removeView(playerItemView);
                     playerCount--;
                     updatePlayerUi();
                 }
-                // else 부분에서 Toast 메시지 호출 코드를 삭제했습니다.
-                // --- 수정된 부분 끝 ---
             }
         });
 
