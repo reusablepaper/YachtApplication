@@ -15,7 +15,7 @@ public class GameManager {
         void onDiceRolled(int[] diceValues);
         void onPossibleScoresCalculated(Map<String, Integer> scores);
         void onScoreRecorded(String playerName, String category, int score);
-        void onGameEnd();
+        void onGameOver(); // 게임 종료 시 호출될 새로운 리스너 메서드
     }
     private final List<OnGameUpdateListener> listeners = new ArrayList<>();
 
@@ -68,25 +68,16 @@ public class GameManager {
         this.currentTurn = 1;
         this.rollCount = 0;
 
-        // 모든 주사위를 초기화 (값 0, 고정 해제)
         for (Dice dice : diceList) {
             dice.reset();
         }
 
-        // 각 플레이어별 점수판 초기화
         this.playerScoresMap = new HashMap<>();
         for (String playerName : initialPlayerNames) {
-            // ScorePerPlayer 객체를 생성할 때 생성자가 자동으로 초기화를 처리합니다.
             playerScoresMap.put(playerName, new ScorePerPlayer());
         }
 
-        // 첫 번째 플레이어를 현재 턴 플레이어로 설정
         this.currentPlayerName = playerNames.get(0);
-
-        // UI에 플레이어 턴 변경을 알림 (초기 설정)
-        for (OnGameUpdateListener listener : listeners) {
-            listener.onPlayerTurnChanged(currentPlayerName);
-        }
     }
 
     // 주사위를 굴리는 메서드
@@ -100,7 +91,6 @@ public class GameManager {
         }
         rollCount++;
 
-        // UI에 주사위 굴림 결과와 가능한 점수를 알림
         int[] currentDiceValues = getDiceValues();
         Map<String, Integer> possibleScores = scoreCalculator.calculateAllScores(currentDiceValues);
 
@@ -116,25 +106,21 @@ public class GameManager {
         int nextIdx = (currentIdx + 1) % totalPlayers;
         currentPlayerName = playerNames.get(nextIdx);
 
-        // 모든 플레이어가 한 턴을 마치면 턴 카운트 증가
         if (nextIdx == 0) {
             currentTurn++;
-            // 턴이 모두 끝나면 게임 종료 알림
             if (currentTurn > maxTurns) {
                 for (OnGameUpdateListener listener : listeners) {
-                    listener.onGameEnd();
+                    listener.onGameOver(); // 게임 종료 이벤트 호출
                 }
                 return;
             }
         }
 
-        // 주사위 초기화 (모든 주사위 값 0, 고정 해제)
         for (Dice dice : diceList) {
             dice.reset();
         }
-        rollCount = 0; // 굴림 횟수 초기화
+        rollCount = 0;
 
-        // UI에 플레이어 턴 변경을 알림
         for (OnGameUpdateListener listener : listeners) {
             listener.onPlayerTurnChanged(currentPlayerName);
             listener.onDiceRolled(getDiceValues());
@@ -146,7 +132,6 @@ public class GameManager {
     public void toggleDiceHold(int index) {
         if (index >= 0 && index < diceList.size()) {
             diceList.get(index).toggleHold();
-            // 주사위 고정 상태가 변경되었을 때 UI에 알림
             for (OnGameUpdateListener listener : listeners) {
                 listener.onDiceRolled(getDiceValues());
                 listener.onPossibleScoresCalculated(calculatePossibleScores());

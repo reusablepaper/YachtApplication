@@ -11,7 +11,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="14"
+        android:layout_weight="12"
         android:orientation="horizontal">
 
         <androidx.fragment.app.FragmentContainerView
@@ -49,22 +49,42 @@
         <Button
             android:id="@+id/showRuleButton"
             android:layout_width="0dp"
-            android:layout_height="25dp"
+            android:layout_height="30dp"
             android:background="@drawable/btn_basic"
+            android:fontFamily="@font/custom_font"
             android:text="규칙"
             android:textColor="#FFFFFF"
-            android:textSize="8sp"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/restartButton"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginHorizontal="40dp"
+            android:background="@drawable/btn_basic"
+            android:fontFamily="@font/custom_font"
+            android:text="다시하기"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/showTotalScoreButton"
+            app:layout_constraintStart_toEndOf="@+id/showRuleButton"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/showTotalScoreButton"
             android:layout_width="0dp"
-            android:layout_height="25dp"
+            android:layout_height="30dp"
             android:background="@drawable/btn_basic"
+            android:fontFamily="@font/custom_font"
             android:text="자세히"
             android:textColor="#FFFFFF"
-            android:textSize="8sp"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>

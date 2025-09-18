@@ -10,7 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-public class SumScoreFragment extends Fragment {
+import java.util.Map;
+
+public class SumScoreFragment extends Fragment implements GameManager.OnGameUpdateListener {
 
     private static final String ARG_PLAYER_NAME = "player_name";
     private String playerName;
@@ -24,13 +26,6 @@ public class SumScoreFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param playerName The name of the player for this score summary.
-     * @return A new instance of fragment SumScoreFragment.
-     */
     public static SumScoreFragment newInstance(String playerName) {
         SumScoreFragment fragment = new SumScoreFragment();
         Bundle args = new Bundle();
@@ -58,16 +53,66 @@ public class SumScoreFragment extends Fragment {
 
         if (playerName != null) {
             playerNameTextView.setText(playerName);
-            updatePlayerTotalScore(); // 초기 점수 업데이트
         }
 
         return view;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // UI가 준비된 후 리스너 등록
+        if (gameManager != null) {
+            gameManager.addListener(this);
+            // 초기 점수 업데이트
+            updatePlayerTotalScore();
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // 프래그먼트 소멸 시 리스너 해제
+        if (gameManager != null) {
+            gameManager.removeListener(this);
+        }
+    }
+
+    //----------------------------------------------------------------
+    // GameManager.OnGameUpdateListener 구현 메서드들
+    //----------------------------------------------------------------
+
+    @Override
+    public void onPlayerTurnChanged(String newPlayerName) {
+        // 모든 플레이어의 총점은 계속 업데이트되므로, 턴 변경 시에도 총점을 갱신합니다.
+        updatePlayerTotalScore();
+    }
+
+    @Override
+    public void onDiceRolled(int[] diceValues) {
+        // SumScoreFragment에서는 주사위 굴림 이벤트를 직접 처리하지 않습니다.
+    }
+
+    @Override
+    public void onPossibleScoresCalculated(Map<String, Integer> scores) {
+        // SumScoreFragment에서는 가능한 점수 이벤트를 직접 처리하지 않습니다.
+    }
+
+    @Override
+    public void onScoreRecorded(String playerName, String category, int score) {
+        // 점수가 기록되면 해당 플레이어의 총점을 갱신합니다.
+        if (this.playerName.equals(playerName)) {
+            updatePlayerTotalScore();
+        }
+    }
+
+    @Override
+    public void onGameOver() {
+        // SumScoreFragment에서 게임 종료 처리가 필요하면 여기에 구현합니다.
+    }
+
     /**
      * Updates the player's total score displayed in this fragment.
-     * This method can be called by the hosting activity or another fragment
-     * when the game state changes.
      */
     public void updatePlayerTotalScore() {
         if (playerName != null && gameManager != null) {

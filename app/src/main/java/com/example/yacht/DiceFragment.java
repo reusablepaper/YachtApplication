@@ -11,11 +11,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-public class DiceFragment extends Fragment {
+import java.util.Map;
+
+public class DiceFragment extends Fragment implements GameManager.OnGameUpdateListener { // OnGameUpdateListener 구현
 
     private ImageView[] diceImageViews = new ImageView[5];
     private Button rollDiceButton;
@@ -33,16 +38,12 @@ public class DiceFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dice, container, false);
 
-        gameManager = GameManager.getInstance();
-
         rollDiceButton = view.findViewById(R.id.roll_dice_button);
-
         diceImageViews[0] = view.findViewById(R.id.dice_1);
         diceImageViews[1] = view.findViewById(R.id.dice_2);
         diceImageViews[2] = view.findViewById(R.id.dice_3);
         diceImageViews[3] = view.findViewById(R.id.dice_4);
         diceImageViews[4] = view.findViewById(R.id.dice_5);
-
         diceContainer = view.findViewById(R.id.dice_image_container);
 
         rollingDiceAnimationView = new ImageView(getContext());
@@ -51,19 +52,65 @@ public class DiceFragment extends Fragment {
                 ViewGroup.LayoutParams.MATCH_PARENT);
         rollingDiceAnimationView.setLayoutParams(params);
         rollingDiceAnimationView.setVisibility(View.GONE);
-
         diceContainer.addView(rollingDiceAnimationView, 0);
 
-        // --- 초기 주사위 이미지를 모두 숨기는 코드 추가 ---
+        // 초기 주사위 이미지들을 모두 숨김
         for (ImageView diceImageView : diceImageViews) {
             diceImageView.setVisibility(View.GONE);
         }
-        // --- 코드 추가 끝 ---
 
+        // 굴리기 버튼 클릭 리스너 설정
         rollDiceButton.setOnClickListener(v -> handleDiceRoll());
 
         return view;
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        gameManager = GameManager.getInstance();
+        if (gameManager != null && gameManager.isInitialized()) {
+            gameManager.addListener(this);
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (gameManager != null) {
+            gameManager.removeListener(this);
+        }
+    }
+
+    // GameManager.OnGameUpdateListener 구현
+    @Override
+    public void onPlayerTurnChanged(String newPlayerName) {
+        if (isAdded()) {
+            // 새 턴이 시작되면 모든 주사위와 고정 상태를 초기화
+            for (ImageView diceImageView : diceImageViews) {
+                diceImageView.setVisibility(View.GONE);
+            }
+            // rollDiceButton도 초기 상태로
+            rollDiceButton.setText("굴리기");
+            rollDiceButton.setEnabled(true);
+        }
+    }
+
+    @Override
+    public void onDiceRolled(int[] diceValues) {
+        if (isAdded()) {
+            updateDiceUI();
+        }
+    }
+
+    @Override
+    public void onPossibleScoresCalculated(Map<String, Integer> scores) {}
+
+    @Override
+    public void onScoreRecorded(String playerName, String category, int score) {}
+
+    @Override
+    public void onGameOver() {}
 
     private void handleDiceRoll() {
         if (gameManager.getRollCount() >= gameManager.getMaxRollsPerTurn()) {
@@ -74,28 +121,25 @@ public class DiceFragment extends Fragment {
         rollDiceButton.setEnabled(false);
         rollDiceButton.setText("굴리는 중...");
 
-        // 모든 주사위 ImageView 숨기기 (이미 숨겨져 있지만 안전을 위해 다시 호출)
         for (ImageView dice : diceImageViews) {
             dice.setVisibility(View.GONE);
         }
 
         rollingDiceAnimationView.setVisibility(View.VISIBLE);
-        Glide.with(this).asGif().load(R.drawable.rolldice).into(rollingDiceAnimationView);
+
+        Glide.with(this)
+                .asGif()
+                .load(R.drawable.rolldice)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(rollingDiceAnimationView);
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             gameManager.rollDice();
-
             rollingDiceAnimationView.setVisibility(View.GONE);
-
-            // 주사위 굴림 후 UI 업데이트
-            updateDiceUI();
-
             Toast.makeText(getContext(), "주사위 굴림 횟수: " + gameManager.getRollCount(), Toast.LENGTH_SHORT).show();
-
             rollDiceButton.setEnabled(true);
             rollDiceButton.setText("굴리기");
-
-            // TODO: nowPlayerFragment의 점수표 업데이트 로직 호출
         }, 3000);
     }
 
@@ -107,11 +151,8 @@ public class DiceFragment extends Fragment {
         for (int i = 0; i < diceImageViews.length; i++) {
             diceImageViews[i].setVisibility(View.VISIBLE);
             int resId;
-            // 주사위 값은 1부터 6까지이므로, diceNames 배열의 인덱스(0~5)와 맞추기 위해 -1을 합니다.
             int diceValue = diceValues[i];
 
-            // 주사위 값이 0일 경우 (초기 상태), 이미지를 표시하지 않습니다.
-            // 이 로직은 이제 필요 없지만, 혹시 모를 경우를 대비해 둡니다.
             if (diceValue == 0) {
                 diceImageViews[i].setVisibility(View.GONE);
                 continue;
@@ -126,7 +167,7 @@ public class DiceFragment extends Fragment {
             }
 
             if (resId != 0) {
-                diceImageViews[i].setImageResource(resId);
+                Glide.with(this).load(resId).into(diceImageViews[i]);
             } else {
                 diceImageViews[i].setImageResource(R.drawable.one);
             }
@@ -142,7 +183,6 @@ public class DiceFragment extends Fragment {
             return;
         }
 
-        // 주사위가 굴려지지 않은 상태(값이 0)에서는 고정할 수 없습니다.
         if (gameManager.getDiceValues()[index] == 0) {
             return;
         }

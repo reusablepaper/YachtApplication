@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,7 +16,7 @@ import androidx.fragment.app.Fragment;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NowPlayerFragment extends Fragment implements GameManager.OnGameUpdateListener {
+public class NowPlayerFragment extends Fragment implements GameManager.OnGameUpdateListener, ConfirmDialog.ConfirmListener {
 
     private GameManager gameManager;
     private TextView nowPlayerNameTextView;
@@ -23,22 +24,16 @@ public class NowPlayerFragment extends Fragment implements GameManager.OnGameUpd
     private final Map<String, Button> scoreButtons = new HashMap<>();
     private final Map<String, TextView> scoreTextViews = new HashMap<>();
 
+    // 주사위 굴림 후 계산된 점수들을 임시 저장
+    private Map<String, Integer> currentPossibleScores = new HashMap<>();
+
+    // 총점 관련 TextView들
+    private TextView upperTotalTextView;
+    private TextView bonusTextView;
+    private TextView grandTotalTextView;
+
     public NowPlayerFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        gameManager = GameManager.getInstance();
-
-        // Logcat으로 GameManager 초기화 상태 확인
-        if (gameManager == null) {
-            Log.e("NowPlayerFragment", "GameManager is null in onCreate!");
-        } else {
-            Log.d("NowPlayerFragment", "GameManager instance found.");
-            // 리스너는 onViewCreated에서 등록합니다.
-        }
     }
 
     @Override
@@ -46,12 +41,14 @@ public class NowPlayerFragment extends Fragment implements GameManager.OnGameUpd
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_now_player, container, false);
 
+        // 뷰 요소 참조
         nowPlayerNameTextView = view.findViewById(R.id.nowPlayerName);
-        mapScoreViews(view);
+        upperTotalTextView = view.findViewById(R.id.upperTotal2);
+        bonusTextView = view.findViewById(R.id.bunus2);
+        grandTotalTextView = view.findViewById(R.id.textView3);
 
-        if (gameManager != null && gameManager.getCurrentPlayerName() != null) {
-            nowPlayerNameTextView.setText(gameManager.getCurrentPlayerName());
-        }
+        mapScoreViews(view);
+        setScoreButtonListeners();
 
         return view;
     }
@@ -60,11 +57,17 @@ public class NowPlayerFragment extends Fragment implements GameManager.OnGameUpd
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (gameManager != null) {
+        gameManager = GameManager.getInstance();
+
+        if (gameManager != null && gameManager.isInitialized()) {
             gameManager.addListener(this);
-            // 초기 상태 업데이트
+            // 초기 UI 상태 업데이트
+            nowPlayerNameTextView.setText(gameManager.getCurrentPlayerName());
             updateAllScoreViews();
             updateScoreboardTotals();
+        } else {
+            Log.e("NowPlayerFragment", "GameManager is not initialized!");
+            // GameManager가 초기화되지 않았을 경우, 액티비티를 종료하거나 오류 메시지를 표시
         }
     }
 
@@ -76,7 +79,6 @@ public class NowPlayerFragment extends Fragment implements GameManager.OnGameUpd
         }
     }
 
-    // ... (mapScoreViews 메서드는 그대로)
     private void mapScoreViews(View view) {
         scoreButtons.put(ScorePerPlayer.CATEGORY_ACES, view.findViewById(R.id.upperButton_1));
         scoreButtons.put(ScorePerPlayer.CATEGORY_TWOS, view.findViewById(R.id.upperButton_2));
@@ -107,11 +109,45 @@ public class NowPlayerFragment extends Fragment implements GameManager.OnGameUpd
         scoreTextViews.put(ScorePerPlayer.CATEGORY_YACHT, view.findViewById(R.id.yachtScore));
     }
 
+    private void setScoreButtonListeners() {
+        for (Map.Entry<String, Button> entry : scoreButtons.entrySet()) {
+            String category = entry.getKey();
+            Button button = entry.getValue();
+            button.setOnClickListener(v -> onScoreButtonClick(category));
+        }
+    }
+
+    private void onScoreButtonClick(String category) {
+        if (gameManager.getRollCount() == 0) {
+            Toast.makeText(getContext(), "주사위를 먼저 굴려주세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (gameManager.getCurrentPlayerScorePerPlayer().isCategoryUsed(category)) {
+            Toast.makeText(getContext(), "이미 사용된 족보입니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        int score = currentPossibleScores.getOrDefault(category, 0);
+
+        ConfirmDialog dialog = ConfirmDialog.newInstance(category, score);
+        dialog.setTargetFragment(this, 0);
+        dialog.show(getParentFragmentManager(), "ConfirmDialog");
+    }
 
     //----------------------------------------------------------------------------------
-    // GameManager.OnGameUpdateListener 구현 메서드들
+    // ConfirmFragment.ConfirmListener implementation
     //----------------------------------------------------------------------------------
+    @Override
+    public void onConfirmed(String category, int score) {
+        gameManager.recordScore(gameManager.getCurrentPlayerName(), category, score);
+        gameManager.nextPlayer();
+    }
 
+
+    //----------------------------------------------------------------------------------
+    // GameManager.OnGameUpdateListener implementation
+    //----------------------------------------------------------------------------------
     @Override
     public void onPlayerTurnChanged(String newPlayerName) {
         if (isAdded()) {
@@ -123,12 +159,13 @@ public class NowPlayerFragment extends Fragment implements GameManager.OnGameUpd
 
     @Override
     public void onDiceRolled(int[] diceValues) {
-        // 이 프래그먼트에서는 직접 사용하지 않음
+        // Not used directly in this fragment
     }
 
     @Override
     public void onPossibleScoresCalculated(Map<String, Integer> scores) {
         if (isAdded()) {
+            currentPossibleScores = scores;
             updatePossibleScores(scores);
         }
     }
@@ -145,8 +182,8 @@ public class NowPlayerFragment extends Fragment implements GameManager.OnGameUpd
     }
 
     @Override
-    public void onGameEnd() {
-        // TODO: 게임 종료 처리
+    public void onGameOver() {
+        // TODO: Handle game over
     }
 
     //----------------------------------------------------------------------------------
@@ -173,7 +210,6 @@ public class NowPlayerFragment extends Fragment implements GameManager.OnGameUpd
             } else {
                 button.setVisibility(View.VISIBLE);
                 textView.setVisibility(View.GONE);
-                // 주사위를 굴리기 전에는 점수가 없으므로 텍스트를 "0"으로 설정
                 button.setText("0");
                 button.setEnabled(true);
             }
@@ -182,10 +218,7 @@ public class NowPlayerFragment extends Fragment implements GameManager.OnGameUpd
 
     private void updatePossibleScores(Map<String, Integer> scores) {
         ScorePerPlayer currentPlayerScore = gameManager.getCurrentPlayerScorePerPlayer();
-        if (currentPlayerScore == null) {
-            Log.e("NowPlayerFragment", "currentPlayerScore is null!");
-            return;
-        }
+        if (currentPlayerScore == null) return;
 
         for (Map.Entry<String, Button> entry : scoreButtons.entrySet()) {
             String category = entry.getKey();
@@ -225,7 +258,8 @@ public class NowPlayerFragment extends Fragment implements GameManager.OnGameUpd
         ScorePerPlayer currentPlayerScore = gameManager.getCurrentPlayerScorePerPlayer();
         if (currentPlayerScore == null) return;
 
-        // TODO: upperTotal2, bunus2, textView3 (총점) 텍스트뷰 참조 및 업데이트 로직 구현
-        // 이 메서드는 ScorePerPlayer에 구현된 getTotalScore(), getUpperSectionTotal(), getUpperSectionBonus() 등을 사용해야 합니다.
+        upperTotalTextView.setText(String.valueOf(currentPlayerScore.getUpperSectionTotal()));
+        bonusTextView.setText(String.valueOf(currentPlayerScore.getUpperSectionBonus()));
+        grandTotalTextView.setText(String.valueOf(currentPlayerScore.getGrandTotal()));
     }
 }

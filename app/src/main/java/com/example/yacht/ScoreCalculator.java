@@ -111,7 +111,7 @@ public class ScoreCalculator {
                 }
             }
             if (isStraight) {
-                return 30; // 30점
+                return 15; // 30점
             }
         }
         return 0; // 조건 불충족 시 0점
@@ -136,7 +136,7 @@ public class ScoreCalculator {
         // 1-2-3-4-5 또는 2-3-4-5-6인지 확인
         if ((sortedUniqueDice[0] == 1 && sortedUniqueDice[1] == 2 && sortedUniqueDice[2] == 3 && sortedUniqueDice[3] == 4 && sortedUniqueDice[4] == 5) ||
                 (sortedUniqueDice[0] == 2 && sortedUniqueDice[1] == 3 && sortedUniqueDice[2] == 4 && sortedUniqueDice[3] == 5 && sortedUniqueDice[4] == 6)) {
-            return 40; // 40점
+            return 30; // 40점
         }
         return 0; // 조건 불충족 시 0점
     }

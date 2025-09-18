@@ -2,20 +2,34 @@ package com.example.yacht;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class PlayGameActivity extends AppCompatActivity {
+public class PlayGameActivity extends AppCompatActivity implements GameManager.OnGameUpdateListener {
 
     private GameManager gameManager;
+    private Button restartButton;
+
+    private boolean doubleBackToExitPressedOnce = false;
+    private static final int BACK_BUTTON_PRESS_DELAY = 2000;
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,42 +49,85 @@ public class PlayGameActivity extends AppCompatActivity {
         }
 
         gameManager = GameManager.getInstance();
+        gameManager.addListener(this);
+
+        restartButton = findViewById(R.id.restartButton);
+        restartButton.setOnClickListener(v -> handleRestartButtonClick());
 
         if (playerNames != null && !playerNames.isEmpty()) {
             gameManager.initializeGame(playerNames);
-
-            // --- 초기 주사위 값을 0으로 설정 (숨겨진 상태) ---
-            // 모든 주사위를 숨긴 상태로 시작하므로, 초기값은 0을 유지하도록 GameManager에서 처리.
-            // DiceFragment가 View.GONE 처리하므로 여기서 특별히 rollDice()를 호출하지 않습니다.
-            // gameManager.rollDice(); // <-- 이전에 추가했던 rollDice() 호출은 이제 필요 없습니다.
-            // ----------------------------------------------
-
-            // 플레이어 수에 따라 SumScoreFragment 동적 추가
             addSumScoreFragmentsForPlayers(playerNames);
-
         } else {
-            // 플레이어 이름이 없으면 액티비티 종료
+            Log.e("PlayGameActivity", "No player names provided.");
             finish();
         }
+    }
 
-        // TODO: 여기에 다른 버튼 리스너 (showRuleButton, showTotalScoreButton) 설정
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (gameManager != null) {
+            gameManager.removeListener(this);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "뒤로가기를 한번 더 누르면 게임이 저장되지 않고 종료됩니다.", Toast.LENGTH_SHORT).show();
+
+        handler.postDelayed(() -> doubleBackToExitPressedOnce = false, BACK_BUTTON_PRESS_DELAY);
+    }
+
+    // This is the only listener method PlayGameActivity needs to implement.
+    @Override
+    public void onGameOver() {
+        if (restartButton != null) {
+            restartButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onPlayerTurnChanged(String newPlayerName) {}
+    @Override
+    public void onDiceRolled(int[] diceValues) {}
+    @Override
+    public void onPossibleScoresCalculated(Map<String, Integer> scores) {}
+    @Override
+    public void onScoreRecorded(String playerName, String category, int score) {}
+
+    private void handleRestartButtonClick() {
+        // gameManager.getPlayerNames()의 반환 타입 List를 ArrayList로 변환
+        ArrayList<String> playerNamesForRestart = new ArrayList<>(gameManager.getPlayerNames());
+        gameManager.initializeGame(playerNamesForRestart);
+        if (restartButton != null) {
+            restartButton.setVisibility(View.GONE);
+        }
+        recreate();
     }
 
     private void addSumScoreFragmentsForPlayers(List<String> playerNames) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        LinearLayout sumScoreContainer = findViewById(R.id.sumScoreFragmentContainer);
 
-        // sumScoreFragmentContainer의 ID를 사용하여 프래그먼트를 추가합니다.
-        // 이 컨테이너는 activity_play_game.xml에 정의된 LinearLayout입니다.
-        int containerId = R.id.sumScoreFragmentContainer;
-
-        for (int i = 0; i < playerNames.size(); i++) {
-            String playerName = playerNames.get(i);
-            SumScoreFragment sumScoreFragment = SumScoreFragment.newInstance(playerName);
-
-            // 각 프래그먼트를 고유한 태그로 추가하여 나중에 찾을 수 있도록 합니다.
-            // 여기서는 replace 대신 add를 사용하여 여러 프래그먼트를 나란히 배치합니다.
-            transaction.add(containerId, sumScoreFragment, "sum_score_fragment_" + i);
+        List<Fragment> currentFragments = getSupportFragmentManager().getFragments();
+        for (Fragment fragment : currentFragments) {
+            if (fragment instanceof SumScoreFragment) {
+                transaction.remove(fragment);
+            }
         }
-        transaction.commit(); // 모든 트랜잭션 커밋
+        transaction.commitNow();
+        transaction = getSupportFragmentManager().beginTransaction();
+
+        for (String playerName : playerNames) {
+            SumScoreFragment sumScoreFragment = SumScoreFragment.newInstance(playerName);
+            transaction.add(sumScoreContainer.getId(), sumScoreFragment);
+        }
+        transaction.commit();
     }
 }
