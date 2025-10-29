@@ -93,6 +93,7 @@ public class SumScoreFragment extends Fragment implements GameManager.OnGameUpda
         // SumScoreFragment에서는 주사위 굴림 이벤트를 직접 처리하지 않습니다.
     }
 
+
     @Override
     public void onPossibleScoresCalculated(Map<String, Integer> scores) {
         // SumScoreFragment에서는 가능한 점수 이벤트를 직접 처리하지 않습니다.

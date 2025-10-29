@@ -1,12 +1,15 @@
 package com.example.yacht;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -26,6 +29,8 @@ public class PlayGameActivity extends AppCompatActivity implements GameManager.O
 
     private GameManager gameManager;
     private Button restartButton;
+    private Button showRuleButton;
+    private Button showTotalScoreButton;
 
     private boolean doubleBackToExitPressedOnce = false;
     private static final int BACK_BUTTON_PRESS_DELAY = 2000;
@@ -53,6 +58,13 @@ public class PlayGameActivity extends AppCompatActivity implements GameManager.O
 
         restartButton = findViewById(R.id.restartButton);
         restartButton.setOnClickListener(v -> handleRestartButtonClick());
+
+        showRuleButton = findViewById(R.id.showRuleButton);
+        showRuleButton.setOnClickListener(v -> showGameRuleDialog());
+
+        showTotalScoreButton = findViewById(R.id.showTotalScoreButton);
+        showTotalScoreButton.setOnClickListener(v -> showTotalScoreDialog());
+
 
         if (playerNames != null && !playerNames.isEmpty()) {
             gameManager.initializeGame(playerNames);
@@ -130,4 +142,55 @@ public class PlayGameActivity extends AppCompatActivity implements GameManager.O
         }
         transaction.commit();
     }
+    private void showGameRuleDialog() {
+        // --- 수정된 부분: Dialog 초기화 방식 변경 ---
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_gamerule);
+
+        Window window = dialog.getWindow();
+        if (window != null) {
+            // 다이얼로그 배경을 투명하게 설정하여 이미지 외에 다른 요소가 보이지 않도록 함
+            window.setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        ImageView imageView = dialog.findViewById(R.id.gameruleImageView);
+        imageView.setOnClickListener(v -> dialog.dismiss());
+        dialog.show();
+        // --- 수정된 부분 끝 ---
+    }
+
+    /**
+     * TotalScoreDialog를 표시합니다.
+     * 기존 다이얼로그가 존재하면 hide 상태를 show로 전환하여 재활용합니다.
+     */
+    private void showTotalScoreDialog() {
+        getSupportFragmentManager().executePendingTransactions();
+
+        TotalScoreDialog existingDialog =
+                (TotalScoreDialog) getSupportFragmentManager().findFragmentByTag(TotalScoreDialog.TAG);
+
+        if (existingDialog != null) {
+            // 기존 인스턴스가 존재하는 경우
+            if (existingDialog.isHidden()) {
+                // 1. FragmentTransaction으로 프래그먼트를 보이게 처리
+                getSupportFragmentManager().beginTransaction()
+                        .show(existingDialog)
+                        .commit();
+            }
+
+            // 2. [핵심 수정]: Dialog 객체의 show()를 명시적으로 호출하여 Window를 다시 표시
+            Dialog dialog = existingDialog.getDialog();
+            if (dialog != null && !dialog.isShowing()) {
+                dialog.show();
+            }
+
+            existingDialog.updateAllColumnsData();
+
+        } else {
+            // 인스턴스가 없으면 새로 생성하여 show()
+            TotalScoreDialog newDialog = TotalScoreDialog.newInstance();
+            newDialog.show(getSupportFragmentManager(), TotalScoreDialog.TAG);
+        }
+    }
+
 }
