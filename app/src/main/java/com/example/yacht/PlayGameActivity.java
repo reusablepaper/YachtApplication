@@ -89,7 +89,7 @@ public class PlayGameActivity extends AppCompatActivity implements GameManager.O
         } else {
             Log.e("PlayGameActivity", "No player names provided.");
             finish();
-        }onGameOver();
+        }
     }
 
     @Override
