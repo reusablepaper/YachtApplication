@@ -114,10 +114,14 @@ public class DiceFragment extends Fragment implements GameManager.OnGameUpdateLi
 
     private void handleDiceRoll() {
         if (gameManager.getRollCount() >= gameManager.getMaxRollsPerTurn()) {
-            Toast.makeText(getContext(), "이번 턴에 더 이상 주사위를 굴릴 수 없습니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "이번 턴에 더 이상 주사위를 굴릴 수 없습니다.\n 점수를 확정해 주세요", Toast.LENGTH_SHORT).show();
+            return;
+
+        }
+        if (gameManager.areAllDiceHeld() && gameManager.getRollCount() > 0) {
+            Toast.makeText(getContext(), "굴릴 주사위가 없습니다.", Toast.LENGTH_SHORT).show();
             return;
         }
-
         rollDiceButton.setEnabled(false);
         rollDiceButton.setText("굴리는 중...");
 
@@ -140,7 +144,7 @@ public class DiceFragment extends Fragment implements GameManager.OnGameUpdateLi
             Toast.makeText(getContext(), "주사위 굴림 횟수: " + gameManager.getRollCount(), Toast.LENGTH_SHORT).show();
             rollDiceButton.setEnabled(true);
             rollDiceButton.setText("굴리기");
-        }, 3000);
+        }, 2000);
     }
 
     private void updateDiceUI() {

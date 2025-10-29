@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/custom_font"
+        android:fontFamily="@font/custom_font_2"
         android:gravity="center"
         android:paddingBottom="8dp"
         android:text="모든 플레이어 상세 점수판"
@@ -31,7 +31,7 @@
             android:name="com.example.yacht.ScoreTypeFragment"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="1.3"
             tools:layout="@layout/fragment_score_type" />
 
         <LinearLayout
@@ -39,7 +39,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4"
-            android:orientation="horizontal"/>
+            android:orientation="horizontal"></LinearLayout>
     </LinearLayout>
 
     <Button
@@ -50,7 +50,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/btn_basic"
-        android:fontFamily="@font/custom_font"
+        android:fontFamily="@font/custom_font_2"
         android:text="닫기"
         android:textColor="#FFFFFF" />
 

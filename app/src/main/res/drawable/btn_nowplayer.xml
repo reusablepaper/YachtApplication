@@ -36,7 +36,7 @@
             android:top="5dp"
             android:bottom="5dp">
                 <shape android:shape="rectangle">
-                    <solid android:color="#F0BEA0" />
+                    <solid android:color="#D2F6ED" />
                     <corners android:radius="20dp"/>
                 </shape>
         </item>

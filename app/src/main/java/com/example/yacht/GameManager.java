@@ -179,6 +179,15 @@ public class GameManager {
     public boolean isInitialized() {
         return playerNames != null && currentPlayerName != null;
     }
+    public boolean areAllDiceHeld() {
+        for (Dice dice : diceList) {
+            if (!dice.isHeld()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     public Map<String, ScorePerPlayer> getPlayerScoresMap() { return playerScoresMap; }
     public String getCurrentPlayerName() { return currentPlayerName; }

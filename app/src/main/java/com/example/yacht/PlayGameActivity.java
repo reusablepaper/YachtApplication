@@ -11,6 +11,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView; // TextView import 추가
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -31,10 +32,16 @@ public class PlayGameActivity extends AppCompatActivity implements GameManager.O
     private Button restartButton;
     private Button showRuleButton;
     private Button showTotalScoreButton;
+    private ImageView gameOverImageView;
+    // --- 추가된 멤버 변수 ---
+    private ImageView nextTurnImageView;
+    private TextView nextTurnTextView;
 
     private boolean doubleBackToExitPressedOnce = false;
     private static final int BACK_BUTTON_PRESS_DELAY = 2000;
     private Handler handler = new Handler(Looper.getMainLooper());
+    private static final int GAME_OVER_DISPLAY_TIME = 2000;
+    private static final int NEXT_TURN_DISPLAY_TIME = 1500; // 다음 턴 알림 표시 시간 (1.5초)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,13 +63,23 @@ public class PlayGameActivity extends AppCompatActivity implements GameManager.O
         gameManager = GameManager.getInstance();
         gameManager.addListener(this);
 
+        // UI 참조
+        gameOverImageView = findViewById(R.id.gameOverImage);
         restartButton = findViewById(R.id.restartButton);
-        restartButton.setOnClickListener(v -> handleRestartButtonClick());
-
         showRuleButton = findViewById(R.id.showRuleButton);
-        showRuleButton.setOnClickListener(v -> showGameRuleDialog());
-
         showTotalScoreButton = findViewById(R.id.showTotalScoreButton);
+
+        // --- 새로운 뷰 참조 ---
+        nextTurnImageView = findViewById(R.id.nextTurnImage);
+        nextTurnTextView = findViewById(R.id.textTurnTextView);
+
+        // 초기 상태 설정
+        gameOverImageView.setVisibility(View.GONE);
+        nextTurnImageView.setVisibility(View.GONE);
+        nextTurnTextView.setVisibility(View.GONE);
+
+        restartButton.setOnClickListener(v -> handleRestartButtonClick());
+        showRuleButton.setOnClickListener(v -> showGameRuleDialog());
         showTotalScoreButton.setOnClickListener(v -> showTotalScoreDialog());
 
 
@@ -72,7 +89,7 @@ public class PlayGameActivity extends AppCompatActivity implements GameManager.O
         } else {
             Log.e("PlayGameActivity", "No player names provided.");
             finish();
-        }
+        }onGameOver();
     }
 
     @Override
@@ -96,16 +113,33 @@ public class PlayGameActivity extends AppCompatActivity implements GameManager.O
         handler.postDelayed(() -> doubleBackToExitPressedOnce = false, BACK_BUTTON_PRESS_DELAY);
     }
 
-    // This is the only listener method PlayGameActivity needs to implement.
+    // GameManager.OnGameUpdateListener 구현
+
     @Override
-    public void onGameOver() {
-        if (restartButton != null) {
-            restartButton.setVisibility(View.VISIBLE);
-        }
+    public void onPlayerTurnChanged(String newPlayerName) {
+        if (isFinishing() || isDestroyed()) return;
+
+        // 턴 변경 알림 팝업 표시
+        showNextTurnOverlay(newPlayerName);
     }
 
     @Override
-    public void onPlayerTurnChanged(String newPlayerName) {}
+    public void onGameOver() {
+        if (gameOverImageView != null) {
+            gameOverImageView.setVisibility(View.VISIBLE);
+        }
+
+        handler.postDelayed(() -> {
+            if (gameOverImageView != null) {
+                gameOverImageView.setVisibility(View.GONE);
+            }
+            if (restartButton != null) {
+                restartButton.setVisibility(View.VISIBLE);
+            }
+            showTotalScoreDialog();
+        }, GAME_OVER_DISPLAY_TIME);
+    }
+
     @Override
     public void onDiceRolled(int[] diceValues) {}
     @Override
@@ -113,13 +147,32 @@ public class PlayGameActivity extends AppCompatActivity implements GameManager.O
     @Override
     public void onScoreRecorded(String playerName, String category, int score) {}
 
+    // --- 턴 오버레이 표시 메서드 ---
+    private void showNextTurnOverlay(String playerName) {
+        // 1. UI 텍스트 설정
+        String message = String.format("턴 종료\n%s의 차례", playerName);
+        nextTurnTextView.setText(message);
+
+        // 2. 오버레이 표시
+        nextTurnImageView.setVisibility(View.VISIBLE);
+        nextTurnTextView.setVisibility(View.VISIBLE);
+
+        // 3. 2초 후 제거
+        handler.postDelayed(() -> {
+            nextTurnImageView.setVisibility(View.GONE);
+            nextTurnTextView.setVisibility(View.GONE);
+        }, NEXT_TURN_DISPLAY_TIME);
+    }
+    // --- 턴 오버레이 표시 메서드 끝 ---
+
     private void handleRestartButtonClick() {
-        // gameManager.getPlayerNames()의 반환 타입 List를 ArrayList로 변환
         ArrayList<String> playerNamesForRestart = new ArrayList<>(gameManager.getPlayerNames());
         gameManager.initializeGame(playerNamesForRestart);
         if (restartButton != null) {
             restartButton.setVisibility(View.GONE);
         }
+        showTotalScoreButton.setEnabled(false);
+        removeTotalScoreDialogBeforeRestart();
         recreate();
     }
 
@@ -143,26 +196,18 @@ public class PlayGameActivity extends AppCompatActivity implements GameManager.O
         transaction.commit();
     }
     private void showGameRuleDialog() {
-        // --- 수정된 부분: Dialog 초기화 방식 변경 ---
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_gamerule);
 
         Window window = dialog.getWindow();
         if (window != null) {
-            // 다이얼로그 배경을 투명하게 설정하여 이미지 외에 다른 요소가 보이지 않도록 함
             window.setBackgroundDrawableResource(android.R.color.transparent);
         }
 
         ImageView imageView = dialog.findViewById(R.id.gameruleImageView);
         imageView.setOnClickListener(v -> dialog.dismiss());
         dialog.show();
-        // --- 수정된 부분 끝 ---
     }
-
-    /**
-     * TotalScoreDialog를 표시합니다.
-     * 기존 다이얼로그가 존재하면 hide 상태를 show로 전환하여 재활용합니다.
-     */
     private void showTotalScoreDialog() {
         getSupportFragmentManager().executePendingTransactions();
 
@@ -170,15 +215,12 @@ public class PlayGameActivity extends AppCompatActivity implements GameManager.O
                 (TotalScoreDialog) getSupportFragmentManager().findFragmentByTag(TotalScoreDialog.TAG);
 
         if (existingDialog != null) {
-            // 기존 인스턴스가 존재하는 경우
             if (existingDialog.isHidden()) {
-                // 1. FragmentTransaction으로 프래그먼트를 보이게 처리
                 getSupportFragmentManager().beginTransaction()
                         .show(existingDialog)
                         .commit();
             }
 
-            // 2. [핵심 수정]: Dialog 객체의 show()를 명시적으로 호출하여 Window를 다시 표시
             Dialog dialog = existingDialog.getDialog();
             if (dialog != null && !dialog.isShowing()) {
                 dialog.show();
@@ -187,9 +229,20 @@ public class PlayGameActivity extends AppCompatActivity implements GameManager.O
             existingDialog.updateAllColumnsData();
 
         } else {
-            // 인스턴스가 없으면 새로 생성하여 show()
             TotalScoreDialog newDialog = TotalScoreDialog.newInstance();
             newDialog.show(getSupportFragmentManager(), TotalScoreDialog.TAG);
+        }
+    }
+    private void removeTotalScoreDialogBeforeRestart() {
+        getSupportFragmentManager().executePendingTransactions();
+        TotalScoreDialog dialog = (TotalScoreDialog)
+                getSupportFragmentManager().findFragmentByTag(TotalScoreDialog.TAG);
+        if (dialog != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .remove(dialog)
+                    .commitNowAllowingStateLoss();
+            Log.d("PlayGameActivity", "TotalScoreDialog removed before recreate()");
         }
     }
 

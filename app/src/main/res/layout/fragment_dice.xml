@@ -68,7 +68,7 @@
         android:layout_marginBottom="15dp"
         android:layout_weight="1"
         android:background="@drawable/btn_basic"
-        android:fontFamily="@font/custom_font"
+        android:fontFamily="@font/custom_font_2"
         android:gravity="center"
         android:text="굴리기"
         android:textColor="#FFFFFF"
