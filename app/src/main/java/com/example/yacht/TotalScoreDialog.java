@@ -71,7 +71,6 @@ public class TotalScoreDialog extends DialogFragment {
         if (savedInstanceState == null) {
             displayScoreboardLayout();
         }
-        // --- 수정 끝 ---
 
         return view;
     }

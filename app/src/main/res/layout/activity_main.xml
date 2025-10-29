@@ -36,12 +36,12 @@
 
         <Button
             android:id="@+id/createScoreBoardButton"
-            android:layout_width="177dp"
-            android:layout_height="54dp"
+            android:layout_width="200dp"
+            android:layout_height="65dp"
             android:layout_gravity="center"
             android:layout_marginTop="50dp"
             android:background="@drawable/btn_basic"
-            android:fontFamily="@font/custom_font"
+            android:fontFamily="@font/custom_font_2"
             android:gravity="center"
             android:text="점수판만들기"
             android:textColor="#FFFFFF"
@@ -49,12 +49,12 @@
 
         <Button
             android:id="@+id/playGameButton"
-            android:layout_width="177dp"
-            android:layout_height="54dp"
+            android:layout_width="200dp"
+            android:layout_height="65dp"
             android:layout_gravity="center"
             android:layout_marginTop="50dp"
             android:background="@drawable/btn_basic"
-            android:fontFamily="@font/custom_font"
+            android:fontFamily="@font/custom_font_2"
             android:gravity="center"
             android:text="게임하기"
             android:textColor="#FFFFFF"
@@ -68,9 +68,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="50dp"
-        android:fontFamily="@font/custom_font"
+        android:fontFamily="@font/custom_font_1"
         android:gravity="center"
-        android:text="버그가 발견된다면 제 잘못은 아닌듯 알아서 하세용"
+        android:text="버그가 발견된다면 개발자에게 알려주세요!"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@+id/imageView" />
 

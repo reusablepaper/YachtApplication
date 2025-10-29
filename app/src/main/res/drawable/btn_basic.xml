@@ -5,12 +5,7 @@
             <item>
                 <shape android:shape="rectangle">
                     <corners android:radius="30dp" />
-                    <gradient
-                        android:angle="0"
-                        android:startColor="#09BFF7"
-                        android:centerColor="#5AE2DB"
-                        android:endColor="#99FBC8"
-                        android:type="linear" />
+                   <solid android:color="#A57EB4"/>
                 </shape>
             </item>
             <item
@@ -22,7 +17,7 @@
                     <corners android:radius="28dp" />
                     <solid android:color="#00000000" /> <stroke
                     android:width="2dp"
-                    android:color="#FFFFFF" />
+                    android:color="#C4C4C4" />
                 </shape>
             </item>
         </layer-list>
@@ -32,12 +27,7 @@
             <item>
                 <shape android:shape="rectangle">
                     <corners android:radius="30dp" />
-                    <gradient
-                        android:angle="0"
-                        android:startColor="#99FBC8"
-                        android:centerColor="#5AE2DB"
-                        android:endColor="#09BFF7"
-                        android:type="linear" />
+                    <solid android:color="#DCB5EF"/>
                 </shape>
             </item>
             <item

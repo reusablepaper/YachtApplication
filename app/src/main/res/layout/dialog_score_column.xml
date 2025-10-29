@@ -15,11 +15,11 @@
         android:layout_margin="1dp"
         android:layout_weight="1"
         android:background="@color/tableHeader"
-        android:fontFamily="@font/custom_font"
+        android:fontFamily="@font/custom_font_2"
         android:gravity="center"
         android:text="Player Name"
         android:textColor="#000000"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:textStyle="bold" />
 
     <TextView
@@ -29,10 +29,10 @@
         android:layout_margin="1dp"
         android:layout_weight="1"
         android:background="@color/tableBG1"
-        android:fontFamily="@font/custom_font"
+        android:fontFamily="@font/custom_font_2"
         android:gravity="center"
         android:text="0"
-        android:textSize="18dp" />
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/score_twos"
@@ -41,10 +41,10 @@
         android:layout_margin="1dp"
         android:layout_weight="1"
         android:background="@color/tableBG1"
-        android:fontFamily="@font/custom_font"
+        android:fontFamily="@font/custom_font_2"
         android:gravity="center"
         android:text="0"
-        android:textSize="18dp" />
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/score_threes"
@@ -54,10 +54,10 @@
         android:layout_margin="1dp"
         android:layout_weight="1"
         android:background="@color/tableBG1"
-        android:fontFamily="@font/custom_font"
+        android:fontFamily="@font/custom_font_2"
         android:gravity="center"
         android:text="0"
-        android:textSize="18dp" />
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/score_fours"
@@ -67,10 +67,10 @@
         android:layout_margin="1dp"
         android:layout_weight="1"
         android:background="@color/tableBG1"
-        android:fontFamily="@font/custom_font"
+        android:fontFamily="@font/custom_font_2"
         android:gravity="center"
         android:text="0"
-        android:textSize="18dp" />
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/score_fives"
@@ -80,10 +80,10 @@
         android:layout_margin="1dp"
         android:layout_weight="1"
         android:background="@color/tableBG1"
-        android:fontFamily="@font/custom_font"
+        android:fontFamily="@font/custom_font_2"
         android:gravity="center"
         android:text="0"
-        android:textSize="18dp" />
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/score_sixes"
@@ -93,10 +93,10 @@
         android:layout_margin="1dp"
         android:layout_weight="1"
         android:background="@color/tableBG1"
-        android:fontFamily="@font/custom_font"
+        android:fontFamily="@font/custom_font_2"
         android:gravity="center"
         android:text="0"
-        android:textSize="18dp" />
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/score_upperTotal"
@@ -105,11 +105,11 @@
         android:layout_margin="1dp"
         android:layout_weight="1"
         android:background="@color/tableBG2"
-        android:fontFamily="@font/custom_font"
+        android:fontFamily="@font/custom_font_2"
         android:gravity="center"
         android:text="0"
         android:textColor="#000000"
-        android:textSize="20dp"
+        android:textSize="12sp"
         android:textStyle="bold" />
 
     <TextView
@@ -119,11 +119,11 @@
         android:layout_margin="1dp"
         android:layout_weight="1"
         android:background="@color/tableBG2"
-        android:fontFamily="@font/custom_font"
+        android:fontFamily="@font/custom_font_2"
         android:gravity="center"
         android:text="0"
         android:textColor="#0BBF0B"
-        android:textSize="20dp"
+        android:textSize="12sp"
         android:textStyle="bold" />
 
     <TextView
@@ -134,10 +134,10 @@
         android:layout_margin="1dp"
         android:layout_weight="1"
         android:background="@color/tableBG1"
-        android:fontFamily="@font/custom_font"
+        android:fontFamily="@font/custom_font_2"
         android:gravity="center"
         android:text="0"
-        android:textSize="18dp" />
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/score_fourKind"
@@ -147,10 +147,10 @@
         android:layout_margin="1dp"
         android:layout_weight="1"
         android:background="@color/tableBG1"
-        android:fontFamily="@font/custom_font"
+        android:fontFamily="@font/custom_font_2"
         android:gravity="center"
         android:text="0"
-        android:textSize="18dp" />
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/score_fullHouse"
@@ -160,10 +160,10 @@
         android:layout_margin="1dp"
         android:layout_weight="1"
         android:background="@color/tableBG1"
-        android:fontFamily="@font/custom_font"
+        android:fontFamily="@font/custom_font_2"
         android:gravity="center"
         android:text="0"
-        android:textSize="18dp" />
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/score_smallStraight"
@@ -173,10 +173,10 @@
         android:layout_margin="1dp"
         android:layout_weight="1"
         android:background="@color/tableBG1"
-        android:fontFamily="@font/custom_font"
+        android:fontFamily="@font/custom_font_2"
         android:gravity="center"
         android:text="0"
-        android:textSize="18dp" />
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/score_largeStraight"
@@ -186,10 +186,10 @@
         android:layout_margin="1dp"
         android:layout_weight="1"
         android:background="@color/tableBG1"
-        android:fontFamily="@font/custom_font"
+        android:fontFamily="@font/custom_font_2"
         android:gravity="center"
         android:text="0"
-        android:textSize="18dp" />
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/score_yacht"
@@ -199,10 +199,10 @@
         android:layout_margin="1dp"
         android:layout_weight="1"
         android:background="@color/tableBG1"
-        android:fontFamily="@font/custom_font"
+        android:fontFamily="@font/custom_font_2"
         android:gravity="center"
         android:text="0"
-        android:textSize="18dp" />
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/score_grandTotal"
@@ -211,11 +211,11 @@
         android:layout_margin="1dp"
         android:layout_weight="1"
         android:background="@color/tableBG2"
-        android:fontFamily="@font/custom_font"
+        android:fontFamily="@font/custom_font_2"
         android:gravity="center"
         android:text="0"
         android:textColor="#000000"
-        android:textSize="20dp"
+        android:textSize="12sp"
         android:textStyle="bold" />
 
 </LinearLayout>
